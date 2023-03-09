@@ -5,8 +5,8 @@ import "../lib/Structure.sol";
 
 interface IAccount {
     /**
-     * @dev
-     * @return
+     * @dev Validate user´s signature
+     * @return sigTimeRange signature and time range
      */
     function validateUserOp(
         UserOperation calldata userOp,
