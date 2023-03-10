@@ -2,8 +2,9 @@
 pragma solidity ^0.8.13;
 
 import "./lib/Structures.sol";
+import "./interface/stake/IStakeManager.sol";
 
-abstract contract StakeManager {
+abstract contract StakeManager is IStakeManager {
 
     uint32 public immutable unstakeDelaySec;
 
@@ -26,6 +27,7 @@ abstract contract StakeManager {
     function depositTo(address account) public payable {
         internalIncrementDep(account, msg.value);
         DepositInfo storage info = deposits[account];
+        emit Deposited(account, info.deposit);
     }
 
     function addStake(uint32 _unstakeDelaySec) public payable {
@@ -41,6 +43,7 @@ abstract contract StakeManager {
             _unstakeDelaySec,
             true
         );
+        emit StakeLocked(msg.sender, stake, _unstakeDelaySec);
     }
 
     function unlockStake() external {
@@ -50,6 +53,7 @@ abstract contract StakeManager {
         uint64 withdrawTime = uint64(block.timestamp) + info.unstakeDelaySec;
         info.withdrawTime = withdrawTime;
         info.staked = false;
+        emit StakeUnlocked(msg.sender, withdrawTime);
     }
 
     function withdrawStake(address payable withdrawAddress) external {
@@ -61,6 +65,7 @@ abstract contract StakeManager {
         info.unstakeDelaySec = 0;
         info.withdrawTime = 0;
         info.stake = 0;
+        emit StakeWithdrawn(msg.sender, withdrawAddress, stake);
         (bool success, ) = withdrawAddress.call{value: stake}("");
         require(success, "failed to withdraw stake");
     }
@@ -69,6 +74,7 @@ abstract contract StakeManager {
         DepositInfo storage info = deposits[msg.sender];
         require(withdrawAmount <= info.deposit, "withdraw amount too large");
         info.deposit = uint112(info.deposit - withdrawAmount);
+        emit Withdran(msg.sender, withdrawAddress, withdrawAmount);
         (bool success, ) = withdrawAddress.call{value: withdrawAmount}("");
         require(success, "failed to withdraw");
     }

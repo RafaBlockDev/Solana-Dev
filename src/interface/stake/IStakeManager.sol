@@ -12,7 +12,7 @@ interface IStakeManager {
 
     event StakeUnlocked(address indexed account, uint256 withdrawTime);
 
-    event StakeWithdrawn(address indexed account, address withdrawAddress, unit256 amount);
+    event StakeWithdrawn(address indexed account, address withdrawAddress, uint256 amount);
 
     function depositTo(address account) external payable;
 
