@@ -52,6 +52,27 @@ abstract contract StakeManager {
         info.staked = false;
     }
 
+    function withdrawStake(address payable withdrawAddress) external {
+        DepositInfo storage info = deposits[msg.sender];
+        uint256 stake = info.stake;
+        require(stake > 0, "no stake to withdraw");
+        require(info.withdrawTime > 0, "must call unlockStake() first");
+        require(info.withdrawTime <= block.timestamp, "stake withdrawal is not due");
+        info.unstakeDelaySec = 0;
+        info.withdrawTime = 0;
+        info.stake = 0;
+        (bool success, ) = withdrawAddress.call{value: stake}("");
+        require(success, "failed to withdraw stake");
+    }
+
+    function withdrawTo(address payable withdrawAddress, uint256 withdrawAmount) external {
+        DepositInfo storage info = deposits[msg.sender];
+        require(withdrawAmount <= info.deposit, "withdraw amount too large");
+        info.deposit = uint112(info.deposit - withdrawAmount);
+        (bool success, ) = withdrawAddress.call{value: withdrawAmount}("");
+        require(success, "failed to withdraw");
+    }
+
     /****************************************/
     /*********** GETTER FUNCTIONS ***********/
     /**************************************+*/
