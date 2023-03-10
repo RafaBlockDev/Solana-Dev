@@ -80,5 +80,9 @@ abstract contract StakeManager {
     function getDepositInfo(address account) public view returns(DepositInfo memory info) {
         return deposits[account];
     }
+    
+    function getBalanceOf(address account) public view returns(uint256) {
+        return deposits[account].deposit;
+    }
 
 }
