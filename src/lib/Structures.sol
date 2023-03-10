@@ -2,6 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "../interface/IAccount.sol";
+import "../interface/IAggregator.sol";
 
 struct UserOperation {
     address sender;
@@ -32,12 +33,15 @@ struct ReturnInfo {
     bytes paymasterContext;
 }
 
-struct StakeInfo {
-    uint256 stake;
-    uint256 unstakeDelaySec;
+struct DepositInfo {
+    uint112 deposit;
+    uint112 stake;
+    uint64 withdrawTime;
+    uint32 unstakeDelaySec;
+    bool staked;
 }
 
 struct AggregatorStakeInfo {
     address actualAggregator;
-    StakeInfo stakeInfo;
+    DepositInfo depositInfo;
 }
