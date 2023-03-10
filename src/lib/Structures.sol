@@ -33,12 +33,15 @@ struct ReturnInfo {
     bytes paymasterContext;
 }
 
-struct StakeInfo {
-    uint256 stake;
-    uint256 unstakeDelaySec;
+struct DepositInfo {
+    uint112 deposit;
+    uint112 stake;
+    uint64 withdrawTime;
+    uint32 unstakeDelaySec;
+    bool staked;
 }
 
 struct AggregatorStakeInfo {
     address actualAggregator;
-    StakeInfo stakeInfo;
+    DepositInfo depositInfo;
 }
